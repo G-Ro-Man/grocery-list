@@ -1,5 +1,5 @@
 import { Button, ButtonText } from '@gluestack-ui/themed';
-import { ReactNode } from 'react';
+import React from 'react';
 
 
 interface MainButtonProps {
@@ -10,11 +10,11 @@ interface MainButtonProps {
 
 export default function MainButton(
   { title, onPress }: MainButtonProps
-): ReactNode {
+): React.JSX.Element {
   return (
     <Button
-      size="xl"
-      variant="solid"
+      size='xl'
+      variant='solid'
       onPress={onPress}
       width='80%'
       mt='$7'

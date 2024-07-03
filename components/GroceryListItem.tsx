@@ -6,37 +6,49 @@ import {
   HStack,
   Text,
   AddIcon,
-  RemoveIcon,
+  RemoveIcon, Box, Spinner
 } from '@gluestack-ui/themed';
-import { ReactNode, useCallback, useState } from 'react';
-import $api from '@/api';
+import React, { useCallback, useState } from 'react';
 import SmallButton from '@/components/SmallButton';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { changeQty, GROCERY_LIST_KEY, ProductType, removeProduct } from '@/api/products';
 
-export default function GroceryListItem({ item }: any): ReactNode {
+export default function GroceryListItem({ item }: ProductType): React.JSX.Element {
   const [isDone, setIsDone] = useState(false);
 
-  const increment = useCallback(()=>{
-    $api.patch(`/posts/${item.id}`, {
-      ...item,
-      "quantity": item.quantity + 1
-    })
-  },[item])
+  const queryClient = useQueryClient()
+  const onSuccess = async () => {
+    await queryClient.invalidateQueries({ queryKey: [GROCERY_LIST_KEY] })
+  }
+
+  const mutationQty = useMutation({
+    mutationFn: changeQty,
+    onSuccess,
+  })
+
+  const mutationRemove = useMutation({
+    mutationFn: removeProduct,
+    onSuccess,
+  })
+
+
+  const increase = useCallback(()=>{
+    mutationQty.mutate({ item, shouldIncrease: true })
+  },[item, mutationQty])
 
   const decrement = useCallback(()=> {
     if (item.quantity <= 1) {
-      $api.delete(`/posts/${item.id}`)
+      mutationRemove.mutate(item.id)
     } else {
-      $api.patch(`/posts/${item.id}`, {
-        ...item,
-        "quantity": item.quantity - 1
-      })
+      mutationQty.mutate({ item, shouldIncrease: false })
     }
-  },[item])
+  },[item, mutationQty, mutationRemove])
 
   return (
       <HStack
         space='md'
         justifyContent='space-between'
+        alignItems='center'
         borderBottomWidth='$1'
         borderColor='$trueGray800'
         $dark-borderColor='$trueGray100'
@@ -59,12 +71,23 @@ export default function GroceryListItem({ item }: any): ReactNode {
         >
           {item.title}
         </Text>
-        <HStack space='md' justifyContent='space-between' alignItems='center'>
-          <SmallButton icon={RemoveIcon} onPress={decrement} />
-          <Text fontSize='$md' color='$coolGray800' $dark-color='$warmGray100'>
-            {item.quantity}
-          </Text>
-          <SmallButton icon={AddIcon} onPress={increment} />
+        <HStack space='md' justifyContent='space-between' alignItems='center' width='$20' minHeight='$9'>
+          {mutationQty.isPending || mutationRemove.isPending
+            ? (
+              <Box justifyContent='center' alignItems='center' width='$full'>
+                <Spinner size='small' />
+              </Box>
+            )
+            : (
+              <>
+                <SmallButton icon={RemoveIcon} onPress={decrement} />
+                <Text fontSize='$md' color='$coolGray800' $dark-color='$warmGray100'>
+                  {item.quantity}
+                </Text>
+                <SmallButton icon={AddIcon} onPress={increase} />
+              </>
+            )
+          }
         </HStack>
       </HStack>
   );

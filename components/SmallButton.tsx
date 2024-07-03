@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React from 'react';
 import { Button, ButtonIcon} from '@gluestack-ui/themed';
 import { Icon } from '@gluestack-ui/themed/build/components/Icons'; // Assuming there's a types file
 
@@ -9,12 +9,12 @@ interface SmallButtonProps {
 
 export default function SmallButton(
   { icon, onPress }: SmallButtonProps
-): ReactNode {
+): React.JSX.Element {
   return (
     <Button
-      size="sm"
-      variant="link"
-      action="secondary"
+      size='sm'
+      variant='link'
+      action='secondary'
       onPress={onPress}
     >
       <ButtonIcon as={icon} />
