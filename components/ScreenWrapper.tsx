@@ -1,7 +1,7 @@
 import { VStack } from '@gluestack-ui/themed';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
-export default function ScreenWrapper({ children }: { children: ReactNode }): ReactNode {
+export default function ScreenWrapper({ children }: { children: ReactNode }): React.JSX.Element {
   return (
     <VStack
       paddingBottom='$20'

@@ -1,5 +1,5 @@
 import { Button, ButtonText } from '@gluestack-ui/themed';
-import { ReactNode } from 'react';
+import React from 'react';
 
 interface LinkButtonProps {
   title: string;
@@ -8,12 +8,12 @@ interface LinkButtonProps {
 
 export default function LinkButton(
   { title, onPress }: LinkButtonProps
-): ReactNode {
+): React.JSX.Element {
   return (
     <Button
-      size="md"
-      variant="link"
-      action="secondary"
+      size='md'
+      variant='link'
+      action='secondary'
       onPress={onPress}
     >
       <ButtonText>{title}</ButtonText>
